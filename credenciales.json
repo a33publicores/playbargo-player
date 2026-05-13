@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "jukebox-a33-492811",
+  "private_key_id": "1ec9589dca59547c764fc3a40784c8bceafee94b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDnjxhG2WLIMcNw\niC9Lxt+ApWybj8mvrC+iIoRjk4GUbbnvmqWjkO/MqXKmZYRaFiFXUyyeuSbaHrfl\nwlnoHOY/xxYuuugxnuZuTxO64hQ66xXIdAam3oKn9QARUovDwXH/e+aORMDwvqK1\nghvkpmt64NzctZ3gWD3e8xTL0A/XAfzjFEXoiM1z1OzmkGUYia4qGxwi7r+7+iGP\n9oTLKeLURGpx3wv6s7xyEC1PaIxTzyPMXZnQosWhuuJur3xQxK3hQnWZy2lKF4P9\nIwePmDi+pwdhXDselY4RmMwk2H7z+wzmOq9icWL0fuvDm8A+NJX8XHou0++ZLHMU\n0Rq/qgdJAgMBAAECggEAGehYMoEa/MQYlkweYo+PLSEVDDiju6x7rdvHzS5RRq6a\nKZU3aBwMwGzK/5QHIV8tfsw3B1E26Bucvq+miIJHPqaDNFpEJV0ecgQV9Ihb9BWe\nW82jeuMVYj5Wshl2usG3g/q0WoGVxrnFkaJLhaMbDmX/QBBv6Axna7ztvDn8s7T2\nPlBgCcMVyJZzwqsKSRh8hVy2s8SPuqPAFbROvK0q3MH81deiTnc/WQwK95SxP65A\nGTvUS2jEl190cvosXbjpC2uslOKQRJHMGDLyKEPDNdQJmEJX87c2PZ2B8PMFE10b\nnv5XNz9ZV8Oc+NQryRDjfIlf47d+9YdJ2IHPyyc42wKBgQD2po81AMZj50W2N5/A\nqknitxDzL/Pw/N2/G6BKkWKTbsVsnBPHfhtlnwYEoosCIN5FHale46oPifYRSd4U\nxhSARcArnt7n1FVBI/pYFzgC07udRqjxu+QZghUteYMIpGJJJkzVOvkH5Uunrke4\nEe20xJh8snRdicUzJ6rx7mFdpwKBgQDwVhbnLe4smi9Ll5KbCMhIg2NlPqCKPXZC\nqu1ZxSwaUFOXY4HXFUkTWDgoBmlsygb1xynDlaJjhL+RmruJcitpdE+3o9h6TFUM\nH0fH0JGqdEs39XNEJYCYlFdHOyRfnxrVcnVXqd4/Dh6W1Ew1GQigwOQ3rsY569pq\nMh1DeZBxjwKBgQDA43jTBowfzNmjqtRwI7wsZOYIiNPI/reboMs2BYSFr/cM/PIq\n7OAYFMjsDwGO5I1ul8fAwWJZTJb25kGbFV0rA2FJu7CutEsH6k75XQ8chuEOGhg9\nE6dKm4RcT869j3CdrCoiB0CBgDwuIglMVhkDaUunGRgPnpJtcvQoxze1uQKBgQCv\ncCiH2R9jr6mWpK6APYj2ZfLIlU7bmsIZKGzaevQWwUxD1n+RYhhV5rAXh5ats0wh\nXaE/BJvlyaGNyEXdr1nBQQZwJ0p++/mZP7xGQBoVM4806heaR0X4G1EazjFfG+Wa\nqlK+C2IQ5V2u/IokuIFz11rAyvQok+J8Yti5yKOIQQKBgQDIah9RRoMj7RGykSAm\n3guXubYIB0pxwi/eMX+Y+iTT4QTk9C+euU5s3ez7jXMrSL4/UYaahEa3pYQQyvtY\nJn0lxmKf5DbrVhJOAAHxM1BGym7EZ8Lud8W2J29otTOu+5qIHq7FqCk6B0YpWT7Q\nNpVvRz912Ai2e3Do5pP51ltBCg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "jukebox-sheets@jukebox-a33-492811.iam.gserviceaccount.com",
+  "client_id": "111708983506371067789",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/jukebox-sheets%40jukebox-a33-492811.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
