@@ -182,13 +182,13 @@ def player_status():
             })
 
         # Próximas 3 canciones en cola
-cola = []
+        cola = []
 
-for j in range(idx_actual + 1, len(datos)):
-    estado = str(datos[j].get("Estado", "")).strip().lower()
+        for j in range(idx_actual + 1, len(datos)):
+            estado = str(datos[j].get("Estado", "")).strip().lower()
 
-    if estado == "agregado":
-        cola.append({
+        if estado == "agregado":
+            cola.append({
             "titulo": datos[j].get("titulo", ""),
             "videoId": (
                 datos[j].get("videoId")
@@ -197,8 +197,8 @@ for j in range(idx_actual + 1, len(datos)):
             )
         })
 
-        if len(cola) >= 3:
-            break
+            if len(cola) >= 3:
+                break
 
         return jsonify({
             "ok": True,
