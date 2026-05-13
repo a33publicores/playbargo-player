@@ -1,10 +1,10 @@
 from flask import Flask, jsonify, request
 
-app = Flask(__name__)
+app = Flask(_name_)
 
 @app.route("/")
 def home():
-    return "PlayBar Go Player API"
+    return "PlayBar Go Player API funcionando"
 
 @app.route("/player/status")
 def player_status():
@@ -24,11 +24,7 @@ def player_status():
 
 @app.route("/player/ended", methods=["POST"])
 def player_ended():
-    data = request.json
-    cliente = data.get("cliente")
-    print(f"Video finalizado para {cliente}")
-
     return jsonify({"ok": True})
 
-if _name_ == "__main__":
+if _name_ == "_main_":
     app.run(host="0.0.0.0", port=5000)
