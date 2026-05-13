@@ -333,43 +333,42 @@ def player_action():
     # Marcar la canción como eliminada
             hoja.update_cell(fila, 8, "Eliminado")
 
-    # Si era la canción actual (posición 0),
-    # activar inmediatamente la siguiente canción
-        if posicion == 0:
-            for i, fila_datos in enumerate(datos, start=2):
-                estado = str(fila_datos.get("Estado", "")).strip().lower()
-                estado2 = str(fila_datos.get("Estado2", "")).strip()
-
-                if estado == "agregado" and estado2 == "":
-                    hoja.update_cell(i, 8, "En reproduccion")
-                    break
+    # Si se eliminó la canción actual,
+    # avanzar usando el mismo endpoint que usa el reproductor
+            if posicion == 0:
+                    request.get_json = lambda *args, **kwargs: {"cliente": cliente}
+                    return player_next()
 
         # ==========================================
         # REPETIR
         # ==========================================
-                elif accion == "repetir":
+            elif accion == "repetir":
                     hoja.update_cell(fila, 8, "Agregado")
 
         # ==========================================
         # SUBIR
         # ==========================================
-                elif accion == "subir" and posicion > 1:
-                    fila_anterior = visibles[posicion - 1]
-                    hoja.swap_rows(fila, fila_anterior)
+            elif accion == "subir" and posicion > 1:
+                return jsonify({
+                "ok": True,
+                "mensaje": "Función subir en desarrollo"
+    })
 
         # ==========================================
         # BAJAR
         # ==========================================
-                elif accion == "bajar" and posicion < len(visibles) - 1:
-                    fila_siguiente = visibles[posicion + 1]
-                    hoja.swap_rows(fila, fila_siguiente)
+            elif accion == "bajar" and posicion < len(visibles) - 1:
+                return jsonify({
+                "ok": True,
+                "mensaje": "Función bajar en desarrollo"
+    })
 
-                else:
+            else:
                     return jsonify({
                 "ok": True
                 })
 
-                return jsonify({
+            return jsonify({
                     "ok": True
             })
 
