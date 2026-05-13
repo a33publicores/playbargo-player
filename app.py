@@ -55,27 +55,21 @@ def obtener_hoja(cliente):
 # DESCARGA DIRECTA DEL VIDEO DESDE YOUTUBE
 # ==========================================================
 
-# REEMPLAZA ÚNICAMENTE ESTA FUNCIÓN EN app.py
-# Busca la función: def obtener_video_url(video_id):
-# y reemplázala completa por esta versión.
-
-# REEMPLAZA COMPLETAMENTE la función obtener_video_url(video_id)
-# por esta versión.
-
-# REEMPLAZA COMPLETAMENTE la función obtener_video_url(video_id)
-# por esta versión.
-
 def obtener_video_url(video_id):
-    """
-    Obtiene una URL directa reproducible del video.
-    """
     try:
         import yt_dlp
 
         youtube_url = f"https://www.youtube.com/watch?v={video_id}"
 
         ydl_opts = {
-            "format": "best",
+            # Prioriza MP4 hasta 1080p con audio integrado.
+            # Si no existe, usa la mejor opción disponible.
+            "format": (
+                "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/"
+                "bestvideo[height<=1080]+bestaudio/"
+                "best[height<=1080]/"
+                "best"
+            ),
             "quiet": True,
             "noplaylist": True,
             "nocheckcertificate": True,
@@ -84,31 +78,29 @@ def obtener_video_url(video_id):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(youtube_url, download=False)
 
-            # 1. Intentar URL principal
+            # Cuando yt-dlp combina audio+video, expone la URL en requested_formats.
+            requested = info.get("requested_formats")
+            if requested and len(requested) >= 1:
+                # Si hay URL combinada disponible
+                if info.get("url"):
+                    return info["url"]
+
             if info.get("url"):
                 return info["url"]
 
-            # 2. Buscar mejor formato con video
+            # Fallback: mejor formato con video
             formatos = info.get("formats", [])
-
-            # Priorizar formatos con video
             formatos_con_video = [
                 f for f in formatos
                 if f.get("url") and f.get("vcodec") != "none"
             ]
 
             if formatos_con_video:
-                # Ordenar por resolución
                 formatos_con_video.sort(
                     key=lambda x: x.get("height") or 0,
                     reverse=True
                 )
                 return formatos_con_video[0]["url"]
-
-            # 3. Cualquier formato con URL
-            for f in reversed(formatos):
-                if f.get("url"):
-                    return f["url"]
 
         return None
 
