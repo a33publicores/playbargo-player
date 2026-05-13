@@ -79,8 +79,7 @@ def obtener_video_url(video_id):
             ),
             "quiet": True,
             "noplaylist": True,
-            ydl_opts = {
-            'format': 'best[protocol!=dash][acodec!=none]/best[acodec!=none]/best',
+            'format': 'bv*+ba/b',
             "nocheckcertificate": True,
             "cookiefile": "/tmp/cookies.txt",
         }
