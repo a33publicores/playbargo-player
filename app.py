@@ -181,14 +181,24 @@ def player_status():
                 "mensaje": "No se pudo obtener URL del video"
             })
 
-        # Siguiente canción
-        siguiente = None
-        for j in range(idx_actual + 1, len(datos)):
-            if str(datos[j].get("Estado", "")).strip().lower() == "agregado":
-                siguiente = {
-                    "titulo": datos[j].get("titulo", "")
-                }
-                break
+        # Próximas 3 canciones en cola
+cola = []
+
+for j in range(idx_actual + 1, len(datos)):
+    estado = str(datos[j].get("Estado", "")).strip().lower()
+
+    if estado == "agregado":
+        cola.append({
+            "titulo": datos[j].get("titulo", ""),
+            "videoId": (
+                datos[j].get("videoId")
+                or datos[j].get("videoid")
+                or ""
+            )
+        })
+
+        if len(cola) >= 3:
+            break
 
         return jsonify({
             "ok": True,
@@ -198,7 +208,7 @@ def player_status():
                 "videoId": video_id,
                 "video_url": video_url
             },
-            "siguiente": siguiente
+            "cola": cola
         })
 
     except Exception as e:
