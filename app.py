@@ -330,7 +330,19 @@ def player_action():
         # ELIMINAR
         # ==========================================
         if accion == "eliminar":
-            hoja.update_cell(fila, 8, "Eliminado")
+    # Marcar la canción como eliminada
+    hoja.update_cell(fila, 8, "Eliminado")
+
+    # Si era la canción actual (posición 0),
+    # activar inmediatamente la siguiente canción
+    if posicion == 0:
+        for i, fila_datos in enumerate(datos, start=2):
+            estado = str(fila_datos.get("Estado", "")).strip().lower()
+            estado2 = str(fila_datos.get("Estado2", "")).strip()
+
+            if estado == "agregado" and estado2 == "":
+                hoja.update_cell(i, 8, "En reproduccion")
+                break
 
         # ==========================================
         # REPETIR
