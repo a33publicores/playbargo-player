@@ -68,11 +68,16 @@ def obtener_video_url(video_id):
         youtube_url = f"https://www.youtube.com/watch?v={video_id}"
 
         ydl_opts = {
-            "format": "22/18/best[acodec!=none]/best",
-                "quiet": True,
-                "noplaylist": True,
-                "nocheckcertificate": True,
-                "cookiefile": "/tmp/cookies.txt",
+    "format": (
+        "best[ext=mp4][vcodec^=avc1][acodec^=mp4a]/"
+        "best[ext=mp4][acodec!=none]/"
+        "best[ext=mp4]/"
+        "best"
+    ),
+    "quiet": True,
+    "noplaylist": True,
+    "nocheckcertificate": True,
+    "cookiefile": "/tmp/cookies.txt",
 }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
