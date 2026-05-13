@@ -30,10 +30,19 @@ SCOPES = [
 # ==========================================================
 
 def conectar_google():
-    creds = Credentials.from_service_account_file(
-        "credenciales.json",
+    import json
+
+    contenido = os.environ.get("GOOGLE_CREDENTIALS")
+    if not contenido:
+        raise Exception("No existe la variable GOOGLE_CREDENTIALS")
+
+    info = json.loads(contenido)
+
+    creds = Credentials.from_service_account_info(
+        info,
         scopes=SCOPES
     )
+
     gc = gspread.authorize(creds)
     return gc
 
