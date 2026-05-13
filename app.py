@@ -217,33 +217,40 @@ def player_status():
 @app.route("/player/next", methods=["POST"])
 def player_next():
     try:
-        data = request.get_json(force=True)
+        # Leer JSON de forma segura
+        data = request.get_json(silent=True) or {}
         cliente = data.get("cliente", "A33")
 
         hoja = obtener_hoja(cliente)
         datos = hoja.get_all_records()
 
         fila_actual = None
+        fila_siguiente = None
 
-        # Buscar actual
-        for i, fila in enumerate(datos):
+        # 1. Buscar canción actual en reproducción
+        for i, fila in enumerate(datos, start=2):
             estado2 = str(fila.get("Estado2", "")).strip().lower()
+
             if estado2 == "en reproduccion":
-                fila_actual = i + 2
+                fila_actual = i
                 break
 
+        # 2. Marcar actual como Reproducido
         if fila_actual:
-            # Limpiar Estado2
-            hoja.update_cell(fila_actual, 8, "")
+            hoja.update_cell(fila_actual, 8, "Reproducido")
 
-        # Buscar siguiente
-        for i, fila in enumerate(datos):
+        # 3. Buscar siguiente canción
+        for i, fila in enumerate(datos, start=2):
             estado = str(fila.get("Estado", "")).strip().lower()
-            estado2 = str(fila.get("Estado2", "")).strip().lower()
+            estado2 = str(fila.get("Estado2", "")).strip()
 
             if estado == "agregado" and estado2 == "":
-                hoja.update_cell(i + 2, 8, "En reproduccion")
+                fila_siguiente = i
                 break
+
+        # 4. Activar siguiente
+        if fila_siguiente:
+            hoja.update_cell(fila_siguiente, 8, "En reproduccion")
 
         return jsonify({
             "ok": True
