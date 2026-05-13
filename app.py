@@ -59,59 +59,54 @@ def obtener_hoja(cliente):
 # Busca la función: def obtener_video_url(video_id):
 # y reemplázala completa por esta versión.
 
+# REEMPLAZA COMPLETAMENTE la función obtener_video_url(video_id)
+# por esta versión.
+
+# REEMPLAZA COMPLETAMENTE la función obtener_video_url(video_id)
+# por esta versión.
+
 def obtener_video_url(video_id):
     """
-    Obtiene una URL directa MP4 reproducible desde YouTube
-    usando Invidious (mucho más estable que Piped).
+    Obtiene una URL reproducible de YouTube usando yt-dlp.
+    Esta es la forma más confiable.
     """
     try:
-        # Instancia pública de Invidious
-        api = f"https://invidious.fdn.fr/api/v1/videos/{video_id}"
+        import yt_dlp
 
-        headers = {
-            "User-Agent": "Mozilla/5.0"
+        youtube_url = f"https://www.youtube.com/watch?v={video_id}"
+
+        ydl_opts = {
+            # Selecciona MP4 con audio y video
+            "format": "best[ext=mp4]/best",
+            # No descargar archivo
+            "quiet": True,
+            "noplaylist": True,
+            # No verificar certificado si algún host intermedio falla
+            "nocheckcertificate": True,
         }
 
-        r = requests.get(api, headers=headers, timeout=30)
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(youtube_url, download=False)
 
-        if r.status_code != 200:
-            print("Error Invidious:", r.status_code)
-            return None
+            # URL directa del archivo
+            url = info.get("url")
 
-        data = r.json()
-
-        # adaptiveFormats contiene URLs directas
-        formatos = data.get("adaptiveFormats", [])
-
-        # Prioridad: MP4 con video y audio
-        for f in formatos:
-            tipo = f.get("type", "")
-            url = f.get("url", "")
-
-            if (
-                "video/mp4" in tipo
-                and url
-                and "init=" not in url
-            ):
-                print("URL obtenida correctamente")
+            if url:
+                print("URL obtenida correctamente con yt-dlp")
                 return url
 
-        # Segunda opción: formatos normales
-        formatos = data.get("formatStreams", [])
+            # Respaldo: recorrer formatos
+            formatos = info.get("formats", [])
+            for f in reversed(formatos):
+                if f.get("url"):
+                    print("URL obtenida desde formats")
+                    return f["url"]
 
-        for f in formatos:
-            tipo = f.get("type", "")
-            url = f.get("url", "")
-
-            if "video/mp4" in tipo and url:
-                print("URL obtenida desde formatStreams")
-                return url
-
-        print("No se encontró formato MP4")
+        print("No se encontró URL del video")
         return None
 
     except Exception as e:
-        print("Error obteniendo video URL:", e)
+        print("Error obteniendo URL con yt-dlp:", e)
         return None
 
 # ==========================================================
