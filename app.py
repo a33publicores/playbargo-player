@@ -9,6 +9,12 @@ from google.oauth2.service_account import Credentials
 import os
 import requests
 
+COOKIES = os.getenv("YOUTUBE_COOKIES")
+
+if COOKIES:
+    with open("/tmp/cookies.txt", "w", encoding="utf-8") as f:
+        f.write(COOKIES)
+
 app = Flask(__name__)
 CORS(app)
 
@@ -69,10 +75,12 @@ def obtener_video_url(video_id):
                 "bestvideo[height<=1080]+bestaudio/"
                 "best[height<=1080]/"
                 "best"
+                
             ),
             "quiet": True,
             "noplaylist": True,
             "nocheckcertificate": True,
+            "cookiefile": "/tmp/cookies.txt",
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
