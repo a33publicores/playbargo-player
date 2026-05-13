@@ -23,19 +23,10 @@ SCOPES = [
 
 
 def conectar_google():
-    """
-    Conecta con Google Sheets usando la variable de entorno
-    GOOGLE_CREDENTIALS en Railway.
-    """
-    cred_json = os.getenv("GOOGLE_CREDENTIALS")
-
-    if not cred_json:
-        raise Exception(
-            "No se encontró la variable GOOGLE_CREDENTIALS en Railway."
-        )
-
-    info = json.loads(cred_json)
-    creds = Credentials.from_service_account_info(info, scopes=SCOPES)
+    creds = Credentials.from_service_account_file(
+        "credenciales.json",
+        scopes=SCOPES
+    )
     return gspread.authorize(creds)
 
 
