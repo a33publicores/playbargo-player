@@ -67,22 +67,13 @@ def obtener_video_url(video_id):
 
         youtube_url = f"https://www.youtube.com/watch?v={video_id}"
 
-        ydl_opts = {
-            # Prioriza MP4 hasta 1080p con audio integrado.
-            # Si no existe, usa la mejor opción disponible.
-            "format": (
-                "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/"
-                "bestvideo[height<=1080]+bestaudio/"
-                "best[height<=1080]/"
-                "best"
-                
-            ),
-            "quiet": True,
-            "noplaylist": True,
-            'format': 'bv*+ba/b',
-            "nocheckcertificate": True,
-            "cookiefile": "/tmp/cookies.txt",
-        }
+ydl_opts = {
+    "format": "best[protocol!=dash][acodec!=none][height<=1080]/best[acodec!=none]/best",
+    "quiet": True,
+    "noplaylist": True,
+    "nocheckcertificate": True,
+    "cookiefile": "/tmp/cookies.txt",
+}
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(youtube_url, download=False)
