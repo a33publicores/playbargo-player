@@ -79,7 +79,7 @@ def obtener_video_url(video_id):
             ),
             "quiet": True,
             "noplaylist": True,
-            'format': 'best[ext=mp4]/best',
+            'format': 'best',
             "nocheckcertificate": True,
             "cookiefile": "/tmp/cookies.txt",
         }
