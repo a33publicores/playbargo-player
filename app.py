@@ -67,8 +67,7 @@ def obtener_hoja(cliente):
 
 def obtener_video_url(video_id):
     """
-    Obtiene una URL reproducible de YouTube usando yt-dlp.
-    Esta es la forma más confiable.
+    Obtiene una URL directa reproducible del video.
     """
     try:
         import yt_dlp
@@ -76,37 +75,45 @@ def obtener_video_url(video_id):
         youtube_url = f"https://www.youtube.com/watch?v={video_id}"
 
         ydl_opts = {
-            # Selecciona MP4 con audio y video
-            "format": "best[ext=mp4]/best",
-            # No descargar archivo
+            "format": "best",
             "quiet": True,
             "noplaylist": True,
-            # No verificar certificado si algún host intermedio falla
             "nocheckcertificate": True,
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(youtube_url, download=False)
 
-            # URL directa del archivo
-            url = info.get("url")
+            # 1. Intentar URL principal
+            if info.get("url"):
+                return info["url"]
 
-            if url:
-                print("URL obtenida correctamente con yt-dlp")
-                return url
-
-            # Respaldo: recorrer formatos
+            # 2. Buscar mejor formato con video
             formatos = info.get("formats", [])
+
+            # Priorizar formatos con video
+            formatos_con_video = [
+                f for f in formatos
+                if f.get("url") and f.get("vcodec") != "none"
+            ]
+
+            if formatos_con_video:
+                # Ordenar por resolución
+                formatos_con_video.sort(
+                    key=lambda x: x.get("height") or 0,
+                    reverse=True
+                )
+                return formatos_con_video[0]["url"]
+
+            # 3. Cualquier formato con URL
             for f in reversed(formatos):
                 if f.get("url"):
-                    print("URL obtenida desde formats")
                     return f["url"]
 
-        print("No se encontró URL del video")
         return None
 
     except Exception as e:
-        print("Error obteniendo URL con yt-dlp:", e)
+        print("Error obteniendo URL con yt-dlp:", str(e))
         return None
 
 # ==========================================================
