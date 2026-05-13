@@ -331,53 +331,53 @@ def player_action():
         # ==========================================
         if accion == "eliminar":
     # Marcar la canción como eliminada
-    hoja.update_cell(fila, 8, "Eliminado")
+            hoja.update_cell(fila, 8, "Eliminado")
 
     # Si era la canción actual (posición 0),
     # activar inmediatamente la siguiente canción
-    if posicion == 0:
-        for i, fila_datos in enumerate(datos, start=2):
-            estado = str(fila_datos.get("Estado", "")).strip().lower()
-            estado2 = str(fila_datos.get("Estado2", "")).strip()
+        if posicion == 0:
+            for i, fila_datos in enumerate(datos, start=2):
+                estado = str(fila_datos.get("Estado", "")).strip().lower()
+                estado2 = str(fila_datos.get("Estado2", "")).strip()
 
-            if estado == "agregado" and estado2 == "":
-                hoja.update_cell(i, 8, "En reproduccion")
-                break
+                if estado == "agregado" and estado2 == "":
+                    hoja.update_cell(i, 8, "En reproduccion")
+                    break
 
         # ==========================================
         # REPETIR
         # ==========================================
-        elif accion == "repetir":
-            hoja.update_cell(fila, 8, "Agregado")
+                elif accion == "repetir":
+                    hoja.update_cell(fila, 8, "Agregado")
 
         # ==========================================
         # SUBIR
         # ==========================================
-        elif accion == "subir" and posicion > 1:
-            fila_anterior = visibles[posicion - 1]
-            hoja.swap_rows(fila, fila_anterior)
+                elif accion == "subir" and posicion > 1:
+                    fila_anterior = visibles[posicion - 1]
+                    hoja.swap_rows(fila, fila_anterior)
 
         # ==========================================
         # BAJAR
         # ==========================================
-        elif accion == "bajar" and posicion < len(visibles) - 1:
-            fila_siguiente = visibles[posicion + 1]
-            hoja.swap_rows(fila, fila_siguiente)
+                elif accion == "bajar" and posicion < len(visibles) - 1:
+                    fila_siguiente = visibles[posicion + 1]
+                    hoja.swap_rows(fila, fila_siguiente)
 
-        else:
-            return jsonify({
+                else:
+                    return jsonify({
                 "ok": True
+                })
+
+                return jsonify({
+                    "ok": True
             })
 
-        return jsonify({
-            "ok": True
-        })
-
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+            import traceback
+            traceback.print_exc()
 
-        return jsonify({
+            return jsonify({
             "ok": False,
             "mensaje": str(e)
         })
