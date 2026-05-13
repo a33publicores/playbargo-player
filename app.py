@@ -280,6 +280,97 @@ def player_next():
         })
 
 # ==========================================================
+# ACCIONES DE LA PLAYLIST
+# ==========================================================
+
+@app.route("/player/action", methods=["POST", "OPTIONS"])
+def player_action():
+    # Permitir preflight CORS del navegador
+    if request.method == "OPTIONS":
+        return jsonify({"ok": True})
+
+    try:
+        data = request.get_json(silent=True) or {}
+
+        cliente = data.get("cliente", "A33")
+        accion = data.get("accion")
+        posicion = int(data.get("posicion", 0))
+
+        hoja = obtener_hoja(cliente)
+        datos = hoja.get_all_records()
+
+        # Construir lista visible:
+        # 0 = canción actual
+        # 1..N = canciones en cola (Estado = Agregado)
+        visibles = []
+
+        # Canción actual
+        for i, fila in enumerate(datos, start=2):
+            estado2 = str(fila.get("Estado2", "")).strip().lower()
+            if estado2 == "en reproduccion":
+                visibles.append(i)
+                break
+
+        # Canciones en cola
+        for i, fila in enumerate(datos, start=2):
+            estado = str(fila.get("Estado", "")).strip().lower()
+            if estado == "agregado":
+                if i not in visibles:
+                    visibles.append(i)
+
+        if posicion < 0 or posicion >= len(visibles):
+            return jsonify({
+                "ok": False,
+                "mensaje": "Posición inválida"
+            })
+
+        fila = visibles[posicion]
+
+        # ==========================================
+        # ELIMINAR
+        # ==========================================
+        if accion == "eliminar":
+            hoja.update_cell(fila, 8, "Eliminado")
+
+        # ==========================================
+        # REPETIR
+        # ==========================================
+        elif accion == "repetir":
+            hoja.update_cell(fila, 8, "Agregado")
+
+        # ==========================================
+        # SUBIR
+        # ==========================================
+        elif accion == "subir" and posicion > 1:
+            fila_anterior = visibles[posicion - 1]
+            hoja.swap_rows(fila, fila_anterior)
+
+        # ==========================================
+        # BAJAR
+        # ==========================================
+        elif accion == "bajar" and posicion < len(visibles) - 1:
+            fila_siguiente = visibles[posicion + 1]
+            hoja.swap_rows(fila, fila_siguiente)
+
+        else:
+            return jsonify({
+                "ok": True
+            })
+
+        return jsonify({
+            "ok": True
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+
+        return jsonify({
+            "ok": False,
+            "mensaje": str(e)
+        })
+
+# ==========================================================
 # INICIO
 # ==========================================================
 
