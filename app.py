@@ -9,7 +9,7 @@ from google.oauth2.service_account import Credentials
 import os
 import requests
 
-app = Flask(_name_)
+app = Flask(__name__)
 CORS(app)
 
 # ==========================================================
@@ -233,6 +233,6 @@ def player_next():
 # INICIO
 # ==========================================================
 
-if _name_ == "_main_":
+if __name__ == "_main_":
     puerto = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=puerto)
