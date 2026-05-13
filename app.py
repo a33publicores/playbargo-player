@@ -46,33 +46,59 @@ def obtener_hoja(cliente):
 # DESCARGA DIRECTA DEL VIDEO DESDE YOUTUBE
 # ==========================================================
 
+# REEMPLAZA ÚNICAMENTE ESTA FUNCIÓN EN app.py
+# Busca la función: def obtener_video_url(video_id):
+# y reemplázala completa por esta versión.
+
 def obtener_video_url(video_id):
     """
-    Usa el servicio de Piped para obtener una URL directa reproducible.
+    Obtiene una URL directa MP4 reproducible desde YouTube
+    usando Invidious (mucho más estable que Piped).
     """
     try:
-        api = f"https://piped.video/api/v1/streams/{video_id}"
-        r = requests.get(api, timeout=20)
+        # Instancia pública de Invidious
+        api = f"https://invidious.fdn.fr/api/v1/videos/{video_id}"
+
+        headers = {
+            "User-Agent": "Mozilla/5.0"
+        }
+
+        r = requests.get(api, headers=headers, timeout=30)
 
         if r.status_code != 200:
+            print("Error Invidious:", r.status_code)
             return None
 
         data = r.json()
 
-        # Buscar formato mp4 con video
-        streams = data.get("videoStreams", [])
+        # adaptiveFormats contiene URLs directas
+        formatos = data.get("adaptiveFormats", [])
 
-        if not streams:
-            return None
+        # Prioridad: MP4 con video y audio
+        for f in formatos:
+            tipo = f.get("type", "")
+            url = f.get("url", "")
 
-        # Elegir la mejor URL disponible
-        for stream in streams:
-            url = stream.get("url")
-            if url:
-                if url.startswith("/"):
-                    return "https://piped.video" + url
+            if (
+                "video/mp4" in tipo
+                and url
+                and "init=" not in url
+            ):
+                print("URL obtenida correctamente")
                 return url
 
+        # Segunda opción: formatos normales
+        formatos = data.get("formatStreams", [])
+
+        for f in formatos:
+            tipo = f.get("type", "")
+            url = f.get("url", "")
+
+            if "video/mp4" in tipo and url:
+                print("URL obtenida desde formatStreams")
+                return url
+
+        print("No se encontró formato MP4")
         return None
 
     except Exception as e:
