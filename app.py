@@ -196,9 +196,8 @@ def player_status():
                 or ""
             )
         })
-
-            if len(cola) >= 3:
-                break
+        if len(cola) >= 3:
+            break
 
         return jsonify({
             "ok": True,
