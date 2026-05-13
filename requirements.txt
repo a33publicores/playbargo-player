@@ -2,4 +2,7 @@ Flask
 flask-cors
 gspread
 google-auth
+requests
+yt-dlp
 gunicorn
+
