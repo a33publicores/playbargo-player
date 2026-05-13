@@ -1,19 +1,23 @@
+# app.py
+# Reproductor PlayBar Go - Backend Railway
+# Copia y pega TODO este archivo completo en app.py
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import gspread
 from google.oauth2.service_account import Credentials
 import os
-import json
+import requests
 
-# ==========================================================
-# CONFIGURACIÓN FLASK
-# ==========================================================
-app = Flask(__name__)
+app = Flask(_name_)
 CORS(app)
 
 # ==========================================================
-# CONFIGURACIÓN GOOGLE SHEETS
+# CONFIGURACIÓN
 # ==========================================================
+
+# ID del Google Sheet:
+# https://docs.google.com/spreadsheets/d/1F1SMAyyY1iUKRX5QjiyrrMmv7W4z27gBsRMS8ZVGNS0/edit
 SHEET_ID = "1F1SMAyyY1iUKRX5QjiyrrMmv7W4z27gBsRMS8ZVGNS0"
 
 SCOPES = [
@@ -21,258 +25,214 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive"
 ]
 
+# ==========================================================
+# GOOGLE SHEETS
+# ==========================================================
 
 def conectar_google():
     creds = Credentials.from_service_account_file(
         "credenciales.json",
         scopes=SCOPES
     )
-    return gspread.authorize(creds)
+    gc = gspread.authorize(creds)
+    return gc
 
-
-gc = conectar_google()
-
-
-# ==========================================================
-# FUNCIONES AUXILIARES
-# ==========================================================
-def obtener_hoja(nombre_hoja):
-    return gc.open_by_key(SHEET_ID).worksheet(nombre_hoja)
-
-
-def obtener_cliente_por_codigo(codigo):
-    """
-    Busca en la hoja CLIENTES el registro cuyo Código coincida.
-    Retorna el valor de la columna Nombre (ej. A33).
-    """
-    hoja = obtener_hoja("CLIENTES")
-    registros = hoja.get_all_records()
-
-    codigo = str(codigo).strip().upper()
-
-    for fila in registros:
-        codigo_fila = str(fila.get("Código", "")).strip().upper()
-        if codigo_fila == codigo:
-            return str(fila.get("Nombre", "")).strip()
-
-    return None
-
-
-def obtener_estado2(row):
-    """
-    Obtiene el valor de Estado2 desde la fila (índice 7).
-    """
-    if len(row) > 7:
-        return str(row[7]).strip()
-    return ""
-
-
-def set_estado2(hoja, fila, valor):
-    """
-    Columna H = 8 (Estado2)
-    """
-    hoja.update_cell(fila, 8, valor)
-
-
-def obtener_cancion_actual_y_siguiente(cliente):
-    """
-    Busca:
-    - En Reproduccion / En Reproducción
-    - Siguiente
-    """
-    hoja = obtener_hoja(cliente)
-    datos = hoja.get_all_values()
-
-    actual = None
-    siguiente = None
-
-    # Saltar encabezado (fila 1)
-    for i in range(2, len(datos) + 1):
-        row = datos[i - 1]
-        estado2 = obtener_estado2(row).lower()
-
-        if estado2 in ["en reproduccion", "en reproducción"]:
-            actual = {
-                "fila": i,
-                "titulo": row[3] if len(row) > 3 else "",
-                "canal": row[4] if len(row) > 4 else "",
-                "videoId": row[5] if len(row) > 5 else "",
-                "video_url": (
-                    f"https://www.youtube.com/watch?v={row[5]}"
-                    if len(row) > 5 and row[5]
-                    else ""
-                ),
-            }
-
-        elif estado2 == "siguiente":
-            siguiente = {
-                "fila": i,
-                "titulo": row[3] if len(row) > 3 else "",
-                "videoId": row[5] if len(row) > 5 else "",
-            }
-
-        if actual and siguiente:
-            break
-
-    return actual, siguiente
-
-
-def avanzar_siguiente(cliente):
-    """
-    Marca la actual como Reproducida y la siguiente como En Reproducción.
-    """
-    hoja = obtener_hoja(cliente)
-    datos = hoja.get_all_values()
-
-    fila_actual = None
-    fila_siguiente = None
-
-    for i in range(2, len(datos) + 1):
-        row = datos[i - 1]
-        estado2 = obtener_estado2(row).lower()
-
-        if estado2 in ["en reproduccion", "en reproducción"]:
-            fila_actual = i
-
-        elif estado2 == "siguiente":
-            fila_siguiente = i
-
-    if fila_actual:
-        set_estado2(hoja, fila_actual, "Reproducida")
-
-    if fila_siguiente:
-        set_estado2(hoja, fila_siguiente, "En Reproducción")
-
-    return True
-
+def obtener_hoja(cliente):
+    gc = conectar_google()
+    ss = gc.open_by_key(SHEET_ID)
+    return ss.worksheet(cliente)
 
 # ==========================================================
-# VARIABLES DE CONTROL DJ
+# DESCARGA DIRECTA DEL VIDEO DESDE YOUTUBE
 # ==========================================================
-dj_estado = {
-    "action": "play"  # play, pause, next, previous
-}
 
+def obtener_video_url(video_id):
+    """
+    Usa el servicio de Piped para obtener una URL directa reproducible.
+    """
+    try:
+        api = f"https://piped.video/api/v1/streams/{video_id}"
+        r = requests.get(api, timeout=20)
+
+        if r.status_code != 200:
+            return None
+
+        data = r.json()
+
+        # Buscar formato mp4 con video
+        streams = data.get("videoStreams", [])
+
+        if not streams:
+            return None
+
+        # Elegir la mejor URL disponible
+        for stream in streams:
+            url = stream.get("url")
+            if url:
+                if url.startswith("/"):
+                    return "https://piped.video" + url
+                return url
+
+        return None
+
+    except Exception as e:
+        print("Error obteniendo video URL:", e)
+        return None
 
 # ==========================================================
-# RUTA PRINCIPAL
+# ENDPOINT PRINCIPAL
 # ==========================================================
+
 @app.route("/")
 def home():
-    return "PlayBar Go Player API funcionando"
-
+    return "PlayBar Go Player OK"
 
 # ==========================================================
-# STATUS DEL REPRODUCTOR
+# ESTADO DEL REPRODUCTOR
 # ==========================================================
+
 @app.route("/player/status")
 def player_status():
-    """
-    Ejemplos:
-    /player/status?cliente=A33
-    /player/status?cliente=8523
-    """
-    codigo = request.args.get("cliente")
-
-    if not codigo:
-        return jsonify({
-            "ok": False,
-            "error": "Parámetro cliente requerido"
-        }), 400
-
-    cliente = obtener_cliente_por_codigo(codigo)
-
-    # Si no existe como código, asumir que ya enviaron el nombre (A33)
-    if not cliente:
-        cliente = str(codigo).strip()
-
     try:
-        actual, siguiente = obtener_cancion_actual_y_siguiente(cliente)
+        cliente = request.args.get("cliente", "A33")
 
-        if not actual:
+        hoja = obtener_hoja(cliente)
+        datos = hoja.get_all_records()
+
+        if not datos:
             return jsonify({
-                "ok": True,
-                "actual": None,
-                "siguiente": siguiente,
-                "control": dj_estado
+                "ok": False,
+                "mensaje": "No hay datos"
             })
 
+        # Buscar canción en reproducción
+        actual = None
+        idx_actual = -1
+
+        for i, fila in enumerate(datos):
+            estado2 = str(fila.get("Estado2", "")).strip().lower()
+
+            if estado2 == "en reproduccion":
+                actual = fila
+                idx_actual = i
+                break
+
+        # Si no existe, tomar la primera canción agregada
+        if actual is None:
+            for i, fila in enumerate(datos):
+                estado = str(fila.get("Estado", "")).strip().lower()
+
+                if estado == "agregado":
+                    actual = fila
+                    idx_actual = i
+
+                    # Marcar en la hoja como En reproduccion
+                    hoja.update_cell(i + 2, 8, "En reproduccion")
+                    break
+
+        if actual is None:
+            return jsonify({
+                "ok": False,
+                "mensaje": "No hay canciones pendientes"
+            })
+
+        video_id = actual.get("videoId") or actual.get("videoid")
+
+        if not video_id:
+            return jsonify({
+                "ok": False,
+                "mensaje": "No existe videoId"
+            })
+
+        video_url = obtener_video_url(video_id)
+
+        if not video_url:
+            return jsonify({
+                "ok": False,
+                "mensaje": "No se pudo obtener URL del video"
+            })
+
+        # Siguiente canción
+        siguiente = None
+        for j in range(idx_actual + 1, len(datos)):
+            if str(datos[j].get("Estado", "")).strip().lower() == "agregado":
+                siguiente = {
+                    "titulo": datos[j].get("titulo", "")
+                }
+                break
+
         return jsonify({
             "ok": True,
-            "actual": actual,
-            "siguiente": siguiente,
-            "control": dj_estado
+            "actual": {
+                "titulo": actual.get("titulo", ""),
+                "canal": actual.get("canal", ""),
+                "videoId": video_id,
+                "video_url": video_url
+            },
+            "siguiente": siguiente
         })
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
+
         return jsonify({
             "ok": False,
-            "error": str(e)
-        }), 500
-
+            "mensaje": str(e)
+        })
 
 # ==========================================================
-# AVANZAR A LA SIGUIENTE CANCIÓN
+# PASAR A LA SIGUIENTE CANCIÓN
 # ==========================================================
+
 @app.route("/player/next", methods=["POST"])
 def player_next():
-    data = request.get_json(silent=True) or {}
-    cliente = data.get("cliente", "A33")
-
     try:
-        avanzar_siguiente(cliente)
+        data = request.get_json(force=True)
+        cliente = data.get("cliente", "A33")
 
-        dj_estado["action"] = "play"
+        hoja = obtener_hoja(cliente)
+        datos = hoja.get_all_records()
+
+        fila_actual = None
+
+        # Buscar actual
+        for i, fila in enumerate(datos):
+            estado2 = str(fila.get("Estado2", "")).strip().lower()
+            if estado2 == "en reproduccion":
+                fila_actual = i + 2
+                break
+
+        if fila_actual:
+            # Limpiar Estado2
+            hoja.update_cell(fila_actual, 8, "")
+
+        # Buscar siguiente
+        for i, fila in enumerate(datos):
+            estado = str(fila.get("Estado", "")).strip().lower()
+            estado2 = str(fila.get("Estado2", "")).strip().lower()
+
+            if estado == "agregado" and estado2 == "":
+                hoja.update_cell(i + 2, 8, "En reproduccion")
+                break
 
         return jsonify({
-            "ok": True,
-            "message": "Avanzado a la siguiente canción"
+            "ok": True
         })
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
+
         return jsonify({
             "ok": False,
-            "error": str(e)
-        }), 500
-
-
-# ==========================================================
-# CONTROL DJ
-# ==========================================================
-@app.route("/player/control", methods=["POST"])
-def player_control():
-    """
-    body JSON:
-    {
-        "action": "pause"
-    }
-
-    Acciones:
-    - play
-    - pause
-    - next
-    - previous
-    """
-    data = request.get_json(silent=True) or {}
-    action = data.get("action", "play")
-
-    if action not in ["play", "pause", "next", "previous"]:
-        return jsonify({
-            "ok": False,
-            "error": "Acción inválida"
-        }), 400
-
-    dj_estado["action"] = action
-
-    return jsonify({
-        "ok": True,
-        "action": action
-    })
-
+            "mensaje": str(e)
+        })
 
 # ==========================================================
-# EJECUCIÓN LOCAL
+# INICIO
 # ==========================================================
-if __name__ == "_main_":
+
+if _name_ == "_main_":
     puerto = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=puerto)
