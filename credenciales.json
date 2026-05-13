@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "jukebox-a33-492811",
+  "private_key_id": "5934f0345c3470bd5187b7acb42404d702f8eae9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtrzUxgOkO2YUC\nQ3PEz/C4WSxvMtzVs8TfRHzUoTEwIwRSQo3+qvQIvm1dFo5fvMTrjIcl3l6U/MeI\nvvNJO4CZC9zHuO8KuKzShbRklklrt3vWzqHZXlPdNSDM0O7Fj+pnF42ElgW16bVL\nbLxp6ovw0Fbxj3JoRziObW/RKc/rgVwos6xyLhcJ5k4lFzmddIzhjOg5SQCGJ25J\nVfYRG8sP/y1rZ1dhp1uXfU4azvQfxF7cHBz2bgNmK2cMy3DRcPz+T6UnbJ7MBcRL\nZgJvfYwBhg4pKITENVpNnKiEVANRzAwaB+Y0wlK+iT9SXf+4im2ofhcWi1qQxO1Y\ni1IG0qLpAgMBAAECggEADzby9PQy9k8NvMYF5S7GCpAdOVx+ReYqj9hjCwlX0ryu\nizozUCTPndh4ohfwvug9Y9j6mdGh/XErVYpMq5SfzkhgvcowfoLw+LwnskwMAHih\nS47sVKtTs2QNDIQc9oeF5CQHDJ9LvsTLUeEjnC+ktKK7iwui3QmoJanmiq8b/KhC\nYG36biBZ3VE58HDhKAUSn/+S29RM1CTW7NUp7Ww/ncStcReyCe48QtbjYUhowLYx\nxjDiNLHf0VjpbSeYrad3dGPVCzIIDQmMIvInAvULgc5Pd/FFpmH4mQBINo1fzC98\neMlWfouTFw4H4oguORAe8aimyxj5gG9dWtBQz0TTRQKBgQDaL9cur8t8TkQTRcGb\nlY81SmcurXzyFh0vJZt+AOl0OA4Uo9n8KMkSzbk+NS7IVa/h9VsdV9viLxAWfxc8\nyhEtNQupDNGfmQZWRoMpyfI6OFoltwD8quFeni9z2aGtAZJejKnw7h/FXXCft6RZ\n0t1rybKSl59Towfk4dNeV4e7/wKBgQDLyPRDySDVEs5dOQQfN43TJoAS2E8gTI9Z\nayj6PpBhi3RGldOVB4mvhhG7E4UOzKsvhJQfKhgavVbavV8KdVSdRTedFACnkuMy\nEOm3G+M7uDwgh+HPA86nw+ZDHzAoq9knDU8B5omCEc6arJp9TtoWyyXt1QngbYsw\naOjuIRtBFwKBgDsQSlMEGbSbx0fkUUXZ1buaWZZENpeeLuZNautQOeJRLlaeCGt/\navchI61YXkKzF3q2naSy3P48uUEtxE+bb8zqGC76HmDy3slKK0WLunvSN20QPj8n\nzvx7G+NjnaWk0EeyEmr7OzSFV/CUmPQL5g7Augt+6g2NC50FGN/oGAFnAoGAQrar\n+NEMdZTtiClVRx75yClvfjvgU5Oczko9pQb8X2K3EzCTjtNj6Nl8ToFKaxjn5euC\nTl2KfJ6Fo6ChT5wvsjjpxvu4ZyO4SzisOqzfjDp5PLEfZJU7f0KrzEeWjYoM0jMS\nLW4akEFiINLm1KUO0q144k5/KEDUc2m079hYwssCgYEAhFfDPwx+/lO+dabehV6Y\nf4NFHUWNa6OoUi7uy1cAZlThmYdQqlvyGOJ468L0NFBXLLNvLWt6oxAPCBOLJaZW\nRR5SoI2P6taL0xaNMdq+O9dA9Y3vgidrDBzgjUhyF/2EadxQ1ubXTcT/wLus2nOe\nzAPjcZmf3Tf8rL0si6f/wVU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "playbargopropio@jukebox-a33-492811.iam.gserviceaccount.com",
+  "client_id": "104064581291740711010",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/playbargopropio%40jukebox-a33-492811.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
