@@ -68,7 +68,7 @@ def obtener_video_url(video_id):
         youtube_url = f"https://www.youtube.com/watch?v={video_id}"
 
         ydl_opts = {
-            "format": "best[protocol!=dash][acodec!=none][height<=1080]/best[acodec!=none]/best",
+            "format": "best[protocol!=dash][acodec!=none][height>=1080]/best[acodec!=none]/best",
                 "quiet": True,
                 "noplaylist": True,
                 "nocheckcertificate": True,
