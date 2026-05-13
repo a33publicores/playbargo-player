@@ -187,17 +187,17 @@ def player_status():
         for j in range(idx_actual + 1, len(datos)):
             estado = str(datos[j].get("Estado", "")).strip().lower()
 
-        if estado == "agregado":
-            cola.append({
-            "titulo": datos[j].get("titulo", ""),
-            "videoId": (
-                datos[j].get("videoId")
-                or datos[j].get("videoid")
-                or ""
-            )
-        })
-        if len(cola) >= 3:
-            break
+            if estado == "agregado":
+                cola.append({
+                "titulo": datos[j].get("titulo", ""),
+                "videoId": (
+                    datos[j].get("videoId")
+                    or datos[j].get("videoid")
+                    or ""
+                )
+            })
+            if len(cola) >= 3:
+                break
 
         return jsonify({
             "ok": True,
