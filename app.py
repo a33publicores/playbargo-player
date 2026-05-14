@@ -348,8 +348,8 @@ def player_action():
 
             elif accion == "anterior":
                 return jsonify({
-                "ok": True,
-                "mensaje": "Función anterior en desarrollo"
+        "ok": True,
+        "mensaje": "Función anterior no implementada aún"
     })
 
         # ==========================================
