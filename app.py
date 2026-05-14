@@ -375,10 +375,6 @@ def player_action():
                 "ok": True
                 })
 
-            return jsonify({
-                    "ok": True
-            })
-
     except Exception as e:
             import traceback
             traceback.print_exc()
