@@ -279,6 +279,7 @@ def player_next():
             "mensaje": str(e)
         })
 
+
 # ==========================================================
 # ACCIONES DE LA PLAYLIST
 # ==========================================================
@@ -301,23 +302,23 @@ def player_action():
 
         # Construir lista visible:
         # 0 = canción actual
-        # 1..N = canciones en cola (Estado = Agregado)
+        # 1..N = canciones en cola
         visibles = []
 
-        # Canción actual
+        # Canción actual (Estado2 = En reproduccion)
         for i, fila in enumerate(datos, start=2):
             estado2 = str(fila.get("Estado2", "")).strip().lower()
             if estado2 == "en reproduccion":
                 visibles.append(i)
                 break
 
-        # Canciones en cola
+        # Canciones en cola (Estado = Agregado)
         for i, fila in enumerate(datos, start=2):
             estado = str(fila.get("Estado", "")).strip().lower()
-            if estado == "agregado":
-                if i not in visibles:
-                    visibles.append(i)
+            if estado == "agregado" and i not in visibles:
+                visibles.append(i)
 
+        # Validar posición
         if posicion < 0 or posicion >= len(visibles):
             return jsonify({
                 "ok": False,
@@ -330,59 +331,72 @@ def player_action():
         # ELIMINAR
         # ==========================================
         if accion == "eliminar":
-    # Marcar la canción como eliminada
+            # Marcar la canción como eliminada
             hoja.update_cell(fila, 8, "Eliminado")
 
-    # Si se eliminó la canción actual,
-    # avanzar usando el mismo endpoint que usa el reproductor
+            # Si se eliminó la canción actual, avanzar automáticamente
             if posicion == 0:
-                    request.get_json = lambda *args, **kwargs: {"cliente": cliente}
-                    return player_next()
-
-        # ==========================================
-        # REPETIR
-        # ==========================================
-            elif accion == "siguiente":
-                request.get_json = lambda *args, **kwargs: {"cliente": cliente}
+                request.get_json = lambda *args, **kwargs: {
+                    "cliente": cliente
+                }
                 return player_next()
 
-            elif accion == "anterior":
-                return jsonify({
-        "ok": True,
-        "mensaje": "Función anterior no implementada aún"
-    })
+            return jsonify({
+                "ok": True
+            })
+
+        # ==========================================
+        # SIGUIENTE
+        # ==========================================
+        elif accion == "siguiente":
+            request.get_json = lambda *args, **kwargs: {
+                "cliente": cliente
+            }
+            return player_next()
+
+        # ==========================================
+        # ANTERIOR
+        # ==========================================
+        elif accion == "anterior":
+            return jsonify({
+                "ok": True,
+                "mensaje": "Función anterior no implementada aún"
+            })
 
         # ==========================================
         # SUBIR
         # ==========================================
-            elif accion == "subir" and posicion > 1:
-                return jsonify({
+        elif accion == "subir":
+            return jsonify({
                 "ok": True,
                 "mensaje": "Función subir en desarrollo"
-    })
+            })
 
         # ==========================================
         # BAJAR
         # ==========================================
-            elif accion == "bajar" and posicion < len(visibles) - 1:
-                return jsonify({
+        elif accion == "bajar":
+            return jsonify({
                 "ok": True,
                 "mensaje": "Función bajar en desarrollo"
-    })
+            })
 
-            else:
-                    return jsonify({
-                "ok": True
-                })
+        # ==========================================
+        # ACCIÓN NO RECONOCIDA
+        # ==========================================
+        return jsonify({
+            "ok": False,
+            "mensaje": "Acción no reconocida"
+        })
 
     except Exception as e:
-            import traceback
-            traceback.print_exc()
+        import traceback
+        traceback.print_exc()
 
-            return jsonify({
+        return jsonify({
             "ok": False,
             "mensaje": str(e)
-        })
+        }), 500
 
 # ==========================================================
 # INICIO
