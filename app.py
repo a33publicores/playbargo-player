@@ -342,8 +342,15 @@ def player_action():
         # ==========================================
         # REPETIR
         # ==========================================
-            elif accion == "repetir":
-                    hoja.update_cell(fila, 8, "Agregado")
+            elif accion == "siguiente":
+                request.get_json = lambda *args, **kwargs: {"cliente": cliente}
+                return player_next()
+
+            elif accion == "anterior":
+                return jsonify({
+                "ok": True,
+                "mensaje": "Función anterior en desarrollo"
+    })
 
         # ==========================================
         # SUBIR
